@@ -1,0 +1,79 @@
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="problem-select.js"></script>
+<link href="submit.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">document.write(currProb())</script>
+<br>
+<div class="dropdown">
+    <button onclick="dropLang()" class="dropbtn">Select language</button>
+    <div id="Dropdown" class="drop-cont">
+        <a href="#" onclick="setLang('cpp')">GNU C++11</a>
+        <a href="#" onclick="setLang('py3')">Python 3</a>
+    </div>
+</div>
+<script type="text/javascript">
+var lang = ''
+function setLang(str) {
+    lang = str;
+    var btn = document.getElementsByClassName("dropbtn")[0];
+    var str = 'Select language';
+    if (lang == 'cpp') {str = 'GNU C++11';}
+    if (lang == 'py3') {str = 'Python 3';}
+    btn.textContent = str;
+}
+function dropLang() {
+    document.getElementById("Dropdown").classList.toggle("show");
+}
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("drop-cont");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+</script>
+<br>
+<script type="text/javascript">
+function performClick(elemId) {
+   var elem = document.getElementById(elemId);
+   if(elem && document.createEvent) {
+      var evt = document.createEvent("MouseEvents");
+      evt.initEvent("click", true, false);
+      elem.dispatchEvent(evt);
+   }
+}
+</script>
+<a href="#" onclick="performClick('theFile');">Choose source</a>
+<input type="file" id="theFile" />
+<br>
+<script type="text/javascript">
+function submit() {
+    if (lang == '' || currProb() == null)return;
+    var str = document.getElementById("theFile").value;
+    $.ajax({
+        type: 'post',
+        url: '/setlng',
+        data: {item : lang}
+    });
+    $.ajax({
+        type: 'post',
+        url: '/setprob',
+        data: {item : currProb()}
+    });
+    $.ajax({
+        type: 'post',
+        url: '/setsrc',
+        data: {item : str}
+    });
+    $.ajax({
+        type: 'get',
+        url: '/test'
+    });
+    document.location.href = "result.html";
+}
+</script>
+<a href="#" onclick="submit();">Submit</a>

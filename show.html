@@ -1,0 +1,26 @@
+<script type="text/javascript" src="problem-select.js"></script>
+<script type="text/javascript">
+var name = "pr/" + currProb() + "/statement";
+document.write(currProb());
+document.write("<br />");
+var rawFile = new XMLHttpRequest();
+rawFile.open("GET", name, false);
+rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                var n = allText.length;
+                for (var i = 0; i < n; i++) {
+                    document.write(allText[i]);
+                    if(allText[i] == '\n')document.write("<br />");
+                }
+            }
+        }
+    }
+rawFile.send(null);
+</script>
+<br>
+<a href="submit.html">Submit</a>
