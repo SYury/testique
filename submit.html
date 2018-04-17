@@ -50,11 +50,14 @@ function performClick(elemId) {
 <a href="#" onclick="performClick('theFile');">Choose source</a>
 <input type="file" id="theFile" />
 <br>
+<a href="#" id="sub">Submit</a>
 <script type="text/javascript">
-function submit() {
+$("#sub").on("click",  
+function (evt) {
+    evt.preventDefault();
     if (lang == '' || currProb() == null)return;
     var str = document.getElementById("theFile").value;
-    $.ajax({
+    var req = $.ajax({
         type: 'post',
         url: '/setlng',
         data: {item : lang}
@@ -71,9 +74,10 @@ function submit() {
     });
     $.ajax({
         type: 'get',
+        cache: false,
         url: '/test'
     });
-    document.location.href = "result.html";
-}
+});
 </script>
-<a href="#" onclick="submit();">Submit</a>
+<br>
+<a href="result.html">Show last submission</a>
