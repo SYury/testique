@@ -7,11 +7,12 @@ ending = {}
 ending['cpp'] = 'cpp'
 ending['py3'] = 'py'
 
+
 def compile_sol(tp):
     if tp == 'cpp':
         os.system('g++ -O2 -std=c++11 tmp.cpp -o tmp')
 
- 
+
 def run_sol(tp, checker, test, tl, chf):
     if chf == sys.stdout:
         chf.write('\033[0mon test ' + test + '\n')
@@ -22,19 +23,24 @@ def run_sol(tp, checker, test, tl, chf):
     else:
         check_line = './' + checker + ' ' + test + ' output.txt ' + test[:-3] + '.out' + ' tmp_checker_out'
     if tp == 'cpp':
+        excode = 0
         try:
-            call(['./tmp'], stdin=open(test, 'r'), stdout=open('output.txt', 'w'), timeout=tl)
+            os.system('ulimit -s unlimited')
+            excode = call(['./tmp'], stdin=open(test, 'r'), stdout=open('output.txt', 'w'), timeout=tl)
         except TimeoutExpired:
             if chf == sys.stdout:
                 chf.write('\033[0;31mTL\033[0m\n')
             else:
                 chf.write('TL\n')
         else:
-            os.system(check_line)
-            if chf != sys.stdout:
-                with open('tmp_checker_out', 'r') as co:
-                    for line in co:
-                        chf.write(line+'\n')
+            if excode != 0:
+                chf.write('Runtime Error\n')
+            else:
+                os.system(check_line)
+                if chf != sys.stdout:
+                    with open('tmp_checker_out', 'r') as co:
+                        for line in co:
+                            chf.write(line+'\n')
     if tp == 'py3':
         try:
             call(['python3 tmp.py'], shell=True, stdin=open(test, 'r'), stdout=open('output.txt', 'w'), timeout=tl)
