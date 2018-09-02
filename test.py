@@ -5,12 +5,15 @@ from subprocess import call, TimeoutExpired
 
 ending = {}
 ending['cpp'] = 'cpp'
+ending['c'] = 'c'
 ending['py3'] = 'py'
 
 
 def compile_sol(tp):
     if tp == 'cpp':
         os.system('g++ -O2 -std=c++11 tmp.cpp -o tmp')
+    if tp == 'c':
+        os.system('gcc -O2 -std=c11 tmp.c -o tmp')
 
 
 def run_sol(tp, checker, test, tl, chf):
@@ -22,7 +25,7 @@ def run_sol(tp, checker, test, tl, chf):
         check_line = './' + checker + ' ' + test + ' output.txt ' + test[:-3] + '.out'
     else:
         check_line = './' + checker + ' ' + test + ' output.txt ' + test[:-3] + '.out' + ' tmp_checker_out'
-    if tp == 'cpp':
+    if tp == 'cpp' or tp == 'c':
         excode = 0
         try:
             os.system('ulimit -s unlimited')

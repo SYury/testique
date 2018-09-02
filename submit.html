@@ -7,6 +7,7 @@
     <button onclick="dropLang()" class="dropbtn">Select language</button>
     <div id="Dropdown" class="drop-cont">
         <a href="#" onclick="setLang('cpp')">GNU C++11</a>
+        <a href="#" onclick="setLang('c')">GNU C11</a>
         <a href="#" onclick="setLang('py3')">Python 3</a>
     </div>
 </div>
@@ -17,6 +18,7 @@ function setLang(str) {
     var btn = document.getElementsByClassName("dropbtn")[0];
     var str = 'Select language';
     if (lang == 'cpp') {str = 'GNU C++11';}
+    if (lang == 'c') {str = 'CNU C11';}
     if (lang == 'py3') {str = 'Python 3';}
     btn.textContent = str;
 }
@@ -52,30 +54,49 @@ function performClick(elemId) {
 <br>
 <a href="#" id="sub">Submit</a>
 <script type="text/javascript">
-$("#sub").on("click",  
-function (evt) {
-    evt.preventDefault();
-    if (lang == '' || currProb() == null)return;
-    var str = document.getElementById("theFile").value;
-    var req = $.ajax({
+function postlng() {
+    return $.ajax({
         type: 'post',
         url: '/setlng',
         data: {item : lang}
     });
-    $.ajax({
+}
+function postprob() {
+    return $.ajax({
         type: 'post',
         url: '/setprob',
         data: {item : currProb()}
     });
-    $.ajax({
+}
+function postsrc(str) {
+    return $.ajax({
         type: 'post',
         url: '/setsrc',
-        data: {item : str}
+        data: {item : str.name}
     });
-    $.ajax({
-        type: 'get',
-        cache: false,
-        url: '/test'
+}
+function uploadsrc(data) {
+    return $.ajax({
+        type: 'post',
+        url: '/uploadsrc',
+        data: data,
+        processData: false,
+        contentType: false,
+    });
+}
+$("#sub").on("click",  
+function (evt) {
+    evt.preventDefault();
+    if (lang == '' || currProb() == null)return;
+    var str = document.getElementById("theFile").files[0];
+    var keks = new FormData();
+    keks.append('files', str);
+    $.when(postlng(), postprob(), postsrc(str), uploadsrc(keks)).done(function(a, b, c, d){
+        $.ajax({
+            type: 'get',
+            cache: false,
+            url: '/test'
+        });
     });
 });
 </script>

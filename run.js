@@ -13,10 +13,14 @@ var fs = require('fs'),
     path = require('path');
 var url = require('url');
 var qs = require('querystring');
+var formidable = require('formidable');
+    util = require('util');
+    fs = require('fs');
 connect().use(function (req, res, next) {
       var query;
       var url_parts = url.parse(req.url, true);
       query = url_parts.query;
+      console.log(url_parts.pathname);
       if (req.method == 'GET') {
         switch (url_parts.pathname) {
             case '/test':
@@ -49,6 +53,17 @@ connect().use(function (req, res, next) {
             var body = '';
             req.on('data', function(data){body += data;});
             req.on('end', function(){var vals = qs.parse(body); src = vals['item'];});
+            res.end();
+            break;
+            case '/uploadsrc':
+            var form = new formidable.IncomingForm();
+            form.uploadDir = __dirname;
+            form.parse(req, function(err, fields, files) {
+                var oldpath = files.files.path;
+                var newpath = __dirname + "/" + src; 
+                console.log(newpath);
+                fs.rename(oldpath, newpath, function (err) { if (err) throw err; });
+            });
             res.end();
             break;
           }
